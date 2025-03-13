@@ -1,48 +1,52 @@
-"use client";
+import { NextResponse } from "next/server";
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+export async function POST(req: Request) {
+  console.log("📌 Received request at /api/spotify-callback");
 
-export default function SpotifyCallback() {
-  const router = useRouter();
+  // Log environment variables (for debugging purposes)
+  console.log("🔍 SPOTIFY_CLIENT_ID:", process.env.SPOTIFY_CLIENT_ID);
+  console.log("🔍 SPOTIFY_CLIENT_SECRET:", process.env.SPOTIFY_CLIENT_SECRET);
+  console.log("🔍 SPOTIFY_REDIRECT_URI:", process.env.SPOTIFY_REDIRECT_URI);
 
-  useEffect(() => {
-    const handleCallback = async () => {
-      const urlParams = new URLSearchParams(window.location.search);
-      const code = urlParams.get("code");
+  try {
+    const { code } = await req.json();
 
-      if (!code) {
-        console.error("No authorization code found.");
-        return;
-      }
+    if (!code) {
+      console.error("❌ No authorization code received!");
+      return NextResponse.json({ error: "No authorization code found" }, { status: 400 });
+    }
 
-      try {
-        // Send auth code to backend for token exchange
-        const response = await fetch("/api/spotify-callback", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ code }),
-        });
+    console.log("🔑 Authorization code received:", code);
 
-        const data = await response.json();
-        if (data.access_token) {
-          // Store access token in localStorage
-          localStorage.setItem("spotify_access_token", data.access_token);
-          router.push("/"); // Redirect to home
-        } else {
-          console.error("Failed to get access token", data);
-        }
-      } catch (error) {
-        console.error("Error during Spotify callback:", error);
-      }
-    };
+    // Request Spotify access token
+    const response = await fetch("https://accounts.spotify.com/api/token", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization:
+          "Basic " +
+          Buffer.from(
+            `${process.env.SPOTIFY_CLIENT_ID}:${process.env.SPOTIFY_CLIENT_SECRET}`
+          ).toString("base64"),
+      },
+      body: new URLSearchParams({
+        grant_type: "authorization_code",
+        code,
+        redirect_uri: process.env.SPOTIFY_REDIRECT_URI!,
+      }),
+    });
 
-    handleCallback();
-  }, []);
+    const data = await response.json();
+    console.log("🎵 Spotify Response:", data);
 
-  return (
-    <div className="flex items-center justify-center min-h-screen text-gray-800">
-      <p>Processing Spotify authentication...</p>
-    </div>
-  );
+    if (!response.ok) {
+      console.error("❌ Spotify token request failed:", data);
+      return NextResponse.json({ error: data.error_description }, { status: response.status });
+    }
+
+    return NextResponse.json(data);
+  } catch (error) {
+    console.error("⚠️ Error during Spotify auth:", error);
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+  }
 }
