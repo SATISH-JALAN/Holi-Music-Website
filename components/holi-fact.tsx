@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import { Info } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Info } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const holiFacts = [
   "Holi marks the arrival of spring and the end of winter.",
@@ -21,41 +21,50 @@ const holiFacts = [
   "The tradition of playing with colors comes from Krishna, who used to play with colors with the gopis.",
   "Different regions in India have their own unique Holi traditions.",
   "Holi is also celebrated in Nepal, Suriname, Guyana, Trinidad and Tobago, and other countries with significant Hindu populations.",
-]
+];
 
 interface HoliFactProps {
-  className?: string
-  standalone?: boolean
+  className?: string;
+  standalone?: boolean;
 }
 
 export default function HoliFact({ className, standalone = false }: HoliFactProps) {
-  const [showFact, setShowFact] = useState(false)
-  const [fact, setFact] = useState("")
-  const [factIndex, setFactIndex] = useState(0)
+  const [showFact, setShowFact] = useState(false);
+  const [fact, setFact] = useState("");
+  const [factIndex, setFactIndex] = useState(0);
+  const [mounted, setMounted] = useState(false); // Fix SSR hydration issue
+
+  // Fix hydration issue by ensuring component is mounted before rendering interactive elements
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const getRandomFact = () => {
-    let randomIndex
-    do {
-      randomIndex = Math.floor(Math.random() * holiFacts.length)
-    } while (randomIndex === factIndex && holiFacts.length > 1)
+    console.log("Button clicked!"); // Debugging step
 
-    setFactIndex(randomIndex)
-    setFact(holiFacts[randomIndex])
-    setShowFact(true)
+    let randomIndex;
+    do {
+      randomIndex = Math.floor(Math.random() * holiFacts.length);
+    } while (randomIndex === factIndex && holiFacts.length > 1);
+
+    setFactIndex(randomIndex);
+    setFact(holiFacts[randomIndex]);
+    setShowFact(true);
 
     if (!standalone) {
-      // Hide fact after 5 seconds if not standalone
       setTimeout(() => {
-        setShowFact(false)
-      }, 5000)
+        setShowFact(false);
+      }, 5000);
     }
-  }
+  };
 
   useEffect(() => {
     if (standalone) {
-      getRandomFact()
+      getRandomFact();
     }
-  }, [standalone])
+  }, [standalone]);
+
+  if (!mounted) return null; // Prevents rendering until client-side
 
   return (
     <div className={className}>
@@ -115,6 +124,5 @@ export default function HoliFact({ className, standalone = false }: HoliFactProp
         )}
       </AnimatePresence>
     </div>
-  )
+  );
 }
-

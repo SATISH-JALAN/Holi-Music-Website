@@ -1,6 +1,7 @@
+"use client";
 import { Suspense } from "react"
 import Link from "next/link"
-import { Music, Sparkles, Play, Shuffle } from "lucide-react"
+import { Music, Sparkles, Play, Shuffle, Info } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import ColorSplash from "@/components/color-splash"
 import FloatingParticles from "@/components/floating-particles"

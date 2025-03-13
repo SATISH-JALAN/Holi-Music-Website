@@ -2,6 +2,9 @@
 
 import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
+import { ArrowLeft } from "lucide-react"
+
+
 import { Music, Shuffle, Heart, SkipForward, Play, Pause, Share2, Download, Flame, Droplet } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -27,6 +30,8 @@ const moods = [
   { id: "traditional", name: "Traditional", color: "from-green-500 to-emerald-500", icon: Music },
   { id: "fusion", name: "Fusion", color: "from-indigo-500 to-blue-500", icon: Shuffle },
 ]
+
+
 
 export default function Generator() {
   const [selectedMood, setSelectedMood] = useState("")
@@ -101,7 +106,8 @@ export default function Generator() {
 
       <div className="container mx-auto px-4 pt-20 relative z-10">
         <motion.h1
-          className="text-4xl md:text-6xl font-bold text-center text-gray-800 mb-8 neon-text"
+          className="text-4xl md:text-6xl font-bold text-center bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent mb-8 neon-text"
+
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -110,17 +116,29 @@ export default function Generator() {
         </motion.h1>
 
         <Tabs defaultValue="mood" className="w-full max-w-4xl mx-auto">
-          <TabsList className="grid grid-cols-3 w-full mb-8 bg-white/80 backdrop-blur-md">
-            <TabsTrigger value="mood" className="text-lg text-gray-800">
-              Choose Mood
-            </TabsTrigger>
-            <TabsTrigger value="remix" className="text-lg text-gray-800">
-              AI Remix
-            </TabsTrigger>
-            <TabsTrigger value="name" className="text-lg text-gray-800">
-              Holi Name
-            </TabsTrigger>
-          </TabsList>
+        <TabsList className="grid grid-cols-3 w-full mb-8 !bg-transparent">
+  <TabsTrigger 
+    value="mood" 
+    className="text-xl font-semibold text-white p-4 rounded-lg shadow-md bg-gradient-to-r from-teal-400 to-indigo-600 hover:from-teal-500 hover:to-indigo-700 transition-all"
+  >
+    Choose Mood
+  </TabsTrigger>
+  <TabsTrigger 
+    value="remix" 
+    className="text-xl font-semibold text-white p-4 rounded-lg shadow-md bg-gradient-to-r from-amber-500 to-purple-700 hover:from-amber-600 hover:to-purple-800 transition-all"
+  >
+    AI Remix
+  </TabsTrigger>
+  <TabsTrigger 
+    value="name" 
+    className="text-xl font-semibold text-white p-4 rounded-lg shadow-md bg-gradient-to-r from-emerald-500 to-red-500 hover:from-emerald-600 hover:to-red-600 transition-all"
+  >
+    Holi Name
+  </TabsTrigger>
+</TabsList>
+
+
+
 
           <TabsContent value="mood" className="space-y-8">
             <motion.div
@@ -384,4 +402,5 @@ export default function Generator() {
     </main>
   )
 }
+
 
