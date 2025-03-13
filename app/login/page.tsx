@@ -1,48 +1,46 @@
 "use client";
 
-import type React from "react";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Music, Sparkles, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
 import ColorSplash from "@/components/color-splash";
 import FloatingParticles from "@/components/floating-particles";
 import CustomCursor from "@/components/custom-cursor";
 import PichkariButton from "@/components/pichkari-button";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useToast } from "@/hooks/use-toast";
 
 export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
-  const [spotifyAuthUrl, setSpotifyAuthUrl] = useState(""); // 🔹 Store the Spotify Auth URL from API
+  const [youtubeAuthUrl, setYoutubeAuthUrl] = useState(""); // 🔹 Store YouTube Auth URL
   const router = useRouter();
   const { toast } = useToast();
 
-  // 🔹 Fetch the Spotify Auth URL from the backend to avoid exposing secrets
+  // 🔹 Fetch YouTube OAuth URL
   useEffect(() => {
-    const fetchSpotifyAuthUrl = async () => {
+    const fetchYouTubeAuthUrl = async () => {
       try {
-        const response = await fetch("/api/get-spotify-auth-url");
+        const response = await fetch("/api/get-youtube-auth-url");
         const data = await response.json();
-        setSpotifyAuthUrl(data.authUrl);
+        setYoutubeAuthUrl(data.authUrl);
       } catch (error) {
-        console.error("Failed to fetch Spotify auth URL", error);
+        console.error("Failed to fetch YouTube auth URL", error);
       }
     };
 
-    fetchSpotifyAuthUrl();
+    fetchYouTubeAuthUrl();
   }, []);
 
+  // 🔹 Handle YouTube Login
   const handleLogin = () => {
-    if (spotifyAuthUrl) {
-      window.location.href = spotifyAuthUrl; // Securely redirect to Spotify Auth
+    if (youtubeAuthUrl) {
+      window.location.href = youtubeAuthUrl; // Securely redirect to YouTube OAuth
     } else {
       toast({
         title: "Error",
-        description: "Unable to authenticate with Spotify. Please try again later.",
+        description: "Unable to authenticate with YouTube. Please try again later.",
         variant: "destructive",
       });
     }
@@ -77,12 +75,12 @@ export default function Login() {
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ delay: 0.2, duration: 0.5 }}
-              className="inline-flex items-center justify-center p-4 bg-gradient-to-r from-pink-500 to-purple-500 rounded-full mb-4"
+              className="inline-flex items-center justify-center p-4 bg-gradient-to-r from-red-500 to-yellow-500 rounded-full mb-4"
             >
               <Music className="h-8 w-8 text-white" />
             </motion.div>
-            <h1 className="text-3xl font-bold text-gray-800 neon-text">Connect with Spotify</h1>
-            <p className="text-gray-700 mt-2">Login to create personalized Holi playlists</p>
+            <h1 className="text-3xl font-bold text-gray-800 neon-text">Connect with YouTube</h1>
+            <p className="text-gray-700 mt-2">Login to access personalized Holi playlists</p>
           </div>
 
           <motion.div
@@ -91,12 +89,12 @@ export default function Login() {
             transition={{ delay: 0.3, duration: 0.5 }}
             className="bg-white/90 backdrop-blur-md rounded-2xl p-6 shadow-xl border border-white/20"
           >
-            {/* 🔹 Removed the form because login is handled via button click */}
+            {/* 🔹 Login button for YouTube */}
             <div className="space-y-4">
               <PichkariButton
                 onClick={handleLogin}
                 disabled={isLoading}
-                className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold py-3 rounded-lg text-lg shadow-lg hover:shadow-xl transition-all duration-300 mt-6"
+                className="w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-bold py-3 rounded-lg text-lg shadow-lg hover:shadow-xl transition-all duration-300 mt-6"
               >
                 {isLoading ? (
                   <div className="flex items-center">
@@ -125,7 +123,7 @@ export default function Login() {
                 ) : (
                   <div className="flex items-center">
                     <Sparkles className="mr-2 h-5 w-5" />
-                    Login with Spotify
+                    Login with YouTube
                   </div>
                 )}
               </PichkariButton>
