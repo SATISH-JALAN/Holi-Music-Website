@@ -1,5 +1,5 @@
 @tailwind base;
-@tailwind components;
+@import "tailwindcss/components";
 @tailwind utilities;
 
 @layer base {
@@ -105,23 +105,24 @@
 
 @layer base {
   * {
-    @apply border-border;
+    border: var(--border);
   }
   body {
-    @apply bg-gradient-to-br from-purple-900 via-indigo-900 to-blue-900 text-foreground;
+    background: linear-gradient(to bottom right, #4c1d95, #312e81, #1e3a8a);
+    color: var(--foreground);
   }
 
   .light body {
-    @apply bg-gradient-to-br from-pink-100 via-purple-100 to-blue-100;
+    background: linear-gradient(to bottom right, #fbcfe8, #e9d5ff, #bfdbfe);
   }
 
   /* Improved text readability */
   .text-content {
-    @apply text-gray-800;
+    color: #1f2937; /* text-gray-800 */
   }
 
   .light .text-content {
-    @apply text-gray-900;
+    color: #111827; /* text-gray-900 */
   }
 }
 

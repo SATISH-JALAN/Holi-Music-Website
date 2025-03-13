@@ -4,7 +4,7 @@ export const generatePlaylist = async (mood: string) => {
     // Example function that simulates generating a playlist based on mood.
     // In a real-world scenario, this could make a request to a third-party API to fetch music data.
   
-    const playlists = {
+    const playlists: { [key: string]: string[] } = {
       energetic: ["Song 1", "Song 2", "Song 3"],
       chill: ["Song 4", "Song 5", "Song 6"],
       romantic: ["Song 7", "Song 8", "Song 9"],

@@ -18,8 +18,6 @@ import PichkariButton from "@/components/pichkari-button"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
 import { useToast } from "@/hooks/use-toast"
-import { generatePlaylist } from "@/lib/api-utils"
-
 const moods = [
   { id: "energetic", name: "Energetic", color: "from-pink-500 to-red-500", icon: Flame },
   { id: "chill", name: "Chill", color: "from-blue-500 to-cyan-500", icon: Droplet },
@@ -211,7 +209,7 @@ export default function Generator() {
           </TabsContent>
 
           <TabsContent value="remix" className="space-y-8">
-            <MusicVisualizer />
+            <MusicVisualizer isPlaying={isPlaying} />
           </TabsContent>
 
           <TabsContent value="name" className="space-y-8">
@@ -234,7 +232,7 @@ export default function Generator() {
               </Button>
               <p>{currentSong.title} - {currentSong.artist}</p>
             </div>
-            <Slider value={50} max={100} />
+            <Slider value={[50]} max={100} />
           </div>
         )}
       </div>
