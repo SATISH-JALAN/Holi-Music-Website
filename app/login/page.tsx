@@ -1,44 +1,52 @@
-"use client"
+"use client";
 
-import type React from "react"
-
-import { useState } from "react"
-import { motion } from "framer-motion"
-import { Music, Sparkles, ArrowLeft } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import ColorSplash from "@/components/color-splash"
-import FloatingParticles from "@/components/floating-particles"
-import CustomCursor from "@/components/custom-cursor"
-import PichkariButton from "@/components/pichkari-button"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { useToast } from "@/hooks/use-toast"
-import { getApiKeys } from "@/lib/api-utils"
+import type React from "react";
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { Music, Sparkles, ArrowLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import ColorSplash from "@/components/color-splash";
+import FloatingParticles from "@/components/floating-particles";
+import CustomCursor from "@/components/custom-cursor";
+import PichkariButton from "@/components/pichkari-button";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Login() {
-  const [isLoading, setIsLoading] = useState(false)
-  const router = useRouter()
-  const { toast } = useToast()
+  const [isLoading, setIsLoading] = useState(false);
+  const [spotifyAuthUrl, setSpotifyAuthUrl] = useState(""); // 🔹 Store the Spotify Auth URL from API
+  const router = useRouter();
+  const { toast } = useToast();
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
+  // 🔹 Fetch the Spotify Auth URL from the backend to avoid exposing secrets
+  useEffect(() => {
+    const fetchSpotifyAuthUrl = async () => {
+      try {
+        const response = await fetch("/api/get-spotify-auth-url");
+        const data = await response.json();
+        setSpotifyAuthUrl(data.authUrl);
+      } catch (error) {
+        console.error("Failed to fetch Spotify auth URL", error);
+      }
+    };
 
-    // Get API keys (in a real app, these would be used for authentication)
-    const apiKeys = getApiKeys()
+    fetchSpotifyAuthUrl();
+  }, []);
 
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false)
+  const handleLogin = () => {
+    if (spotifyAuthUrl) {
+      window.location.href = spotifyAuthUrl; // Securely redirect to Spotify Auth
+    } else {
       toast({
-        title: "Login Successful",
-        description: "You've been logged in to Spotify!",
-      })
-      router.push("/generator")
-    }, 1500)
-  }
+        title: "Error",
+        description: "Unable to authenticate with Spotify. Please try again later.",
+        variant: "destructive",
+      });
+    }
+  };
 
   return (
     <main className="relative min-h-screen overflow-hidden animate-fade-in">
@@ -83,35 +91,10 @@ export default function Login() {
             transition={{ delay: 0.3, duration: 0.5 }}
             className="bg-white/90 backdrop-blur-md rounded-2xl p-6 shadow-xl border border-white/20"
           >
-            <form onSubmit={handleLogin} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="email" className="text-gray-800">
-                  Email
-                </Label>
-                <Input
-                  id="email"
-                  placeholder="your.email@example.com"
-                  type="email"
-                  required
-                  className="bg-white/70 border-white/20 text-gray-800 placeholder:text-gray-500 focus:border-pink-500"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="password" className="text-gray-800">
-                  Password
-                </Label>
-                <Input
-                  id="password"
-                  placeholder="••••••••"
-                  type="password"
-                  required
-                  className="bg-white/70 border-white/20 text-gray-800 placeholder:text-gray-500 focus:border-pink-500"
-                />
-              </div>
-
+            {/* 🔹 Removed the form because login is handled via button click */}
+            <div className="space-y-4">
               <PichkariButton
-                type="submit"
+                onClick={handleLogin}
                 disabled={isLoading}
                 className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold py-3 rounded-lg text-lg shadow-lg hover:shadow-xl transition-all duration-300 mt-6"
               >
@@ -146,35 +129,12 @@ export default function Login() {
                   </div>
                 )}
               </PichkariButton>
-
-              <div className="text-center mt-4">
-                <p className="text-gray-700 text-sm">
-                  Don't have an account?{" "}
-                  <a href="#" className="text-pink-600 hover:text-pink-700 transition-colors duration-300">
-                    Sign up for Spotify
-                  </a>
-                </p>
-              </div>
-            </form>
+            </div>
           </motion.div>
-
-          <div className="mt-8 text-center">
-            <p className="text-gray-700 text-sm">
-              By connecting, you agree to our{" "}
-              <a href="#" className="text-gray-800 hover:text-black transition-colors duration-300 underline">
-                Terms of Service
-              </a>{" "}
-              and{" "}
-              <a href="#" className="text-gray-800 hover:text-black transition-colors duration-300 underline">
-                Privacy Policy
-              </a>
-            </p>
-          </div>
         </motion.div>
       </div>
 
       <ColorSplash />
     </main>
-  )
+  );
 }
-
